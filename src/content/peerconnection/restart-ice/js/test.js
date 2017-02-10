@@ -27,13 +27,21 @@ function getTransportAddresses(stats) {
   var localAddress;
   var remoteAddress;
   stats.forEach(function(report) {
-    if (report.googActiveConnection === 'true') {
+    if (report.googActiveConnection === 'true' ||
+        report.state === 'succeeded') {
       var localCandidate = stats.get(report.localCandidateId);
+      var localIp = typeof localCandidate.ipAddress !== 'undefined' ?
+          localCandidate.ipAddress : localCandidate.ip;
+      var localPort = typeof localCandidate.portNumber !== 'undefined' ?
+          localCandidate.portNumber : localCandidate.port;
+      localAddress = localIp + ':' + localPort;
+
       var remoteCandidate = stats.get(report.remoteCandidateId);
-      localAddress = localCandidate.ipAddress + ':' +
-          localCandidate.portNumber;
-      remoteAddress = remoteCandidate.ipAddress + ':' +
-          remoteCandidate.portNumber;
+      var remoteIp = typeof remoteCandidate.ipAddress !== 'undefined' ?
+          remoteCandidate.ipAddress : remoteCandidate.ip;
+      var remotePort = typeof remoteCandidate.portNumber !== 'undefined' ?
+          remoteCandidate.portNumber : remoteCandidate.port;
+      remoteAddress = remoteIp + ':' + remotePort;
     }
   });
   return localAddress + ' ' + remoteAddress;
